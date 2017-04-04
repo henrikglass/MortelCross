@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_mortelcross" default="compile.module.mortelcross">
+  <dirname property="module.mortelcross.basedir" file="${ant.file.module_mortelcross}"/>
+  
+  <property name="module.jdk.home.mortelcross" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.mortelcross" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.mortelcross" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.mortelcross" value="-encoding windows-1252 -source 8 ${compiler.args}"/>
+  
+  <property name="mortelcross.output.dir" value="${module.mortelcross.basedir}/out/production/MortelCross"/>
+  <property name="mortelcross.testoutput.dir" value="${module.mortelcross.basedir}/out/test/MortelCross"/>
+  
+  <path id="mortelcross.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mortelcross.module.production.classpath">
+    <path refid="${module.jdk.classpath.mortelcross}"/>
+  </path>
+  
+  <path id="mortelcross.runtime.production.module.classpath">
+    <pathelement location="${mortelcross.output.dir}"/>
+  </path>
+  
+  <path id="mortelcross.module.classpath">
+    <path refid="${module.jdk.classpath.mortelcross}"/>
+    <pathelement location="${mortelcross.output.dir}"/>
+  </path>
+  
+  <path id="mortelcross.runtime.module.classpath">
+    <pathelement location="${mortelcross.testoutput.dir}"/>
+    <pathelement location="${mortelcross.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mortelcross">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mortelcross">
+    <patternset refid="excluded.from.module.mortelcross"/>
+  </patternset>
+  
+  <path id="mortelcross.module.sourcepath">
+    <dirset dir="${module.mortelcross.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mortelcross" depends="compile.module.mortelcross.production,compile.module.mortelcross.tests" description="Compile module MortelCross"/>
+  
+  <target name="compile.module.mortelcross.production" depends="register.custom.compilers" description="Compile module MortelCross; production classes">
+    <mkdir dir="${mortelcross.output.dir}"/>
+    <javac2 destdir="${mortelcross.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mortelcross}/javac">
+      <compilerarg line="${compiler.args.mortelcross}"/>
+      <bootclasspath refid="mortelcross.module.bootclasspath"/>
+      <classpath refid="mortelcross.module.production.classpath"/>
+      <src refid="mortelcross.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mortelcross"/>
+    </javac2>
+    
+    <copy todir="${mortelcross.output.dir}">
+      <fileset dir="${module.mortelcross.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mortelcross.tests" depends="register.custom.compilers,compile.module.mortelcross.production" description="compile module MortelCross; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.mortelcross" description="cleanup module">
+    <delete dir="${mortelcross.output.dir}"/>
+    <delete dir="${mortelcross.testoutput.dir}"/>
+  </target>
+</project>
